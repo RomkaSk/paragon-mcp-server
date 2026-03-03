@@ -1,0 +1,58 @@
+{
+  "name": "@romkask/paragon-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for OpenedX Paragon v23 design system documentation",
+  "license": "MIT",
+  "author": "Roman Kravets",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RomkaSk/paragon-mcp-server.git"
+  },
+  "homepage": "https://github.com/RomkaSk/paragon-mcp-server#readme",
+  "bugs": {
+    "url": "https://github.com/RomkaSk/paragon-mcp-server/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "paragon",
+    "openedx",
+    "open-edx",
+    "design-system",
+    "component-library",
+    "ai",
+    "llm"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "paragon-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build:data": "node scripts/build-data.mjs",
+    "build:ts": "tsup",
+    "build": "npm run build:data && npm run build:ts",
+    "prepare": "npm run build:ts",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

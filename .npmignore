@@ -1,0 +1,7 @@
+src/
+scripts/
+data/
+tsconfig.json
+tsup.config.ts
+.github/
+.paragon-src/
