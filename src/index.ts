@@ -8,64 +8,13 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import componentsData from "../data/components.json";
+import {
+  db,
+  requireComponent,
+  type ExampleDef,
+} from "./components-db.js";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-
-interface FieldDef {
-  name: string;
-  type: string;
-  description: string;
-  interface?: string;
-}
-
-interface ExampleDef {
-  id: string;
-  title: string;
-  code: string;
-}
-
-interface CSSVariable {
-  name: string;
-  value: string;
-  type?: string;
-  source?: string;
-  category: string;
-}
-
-interface ComponentData {
-  name: string;
-  dirName: string;
-  description: string;
-  status: string;
-  designStatus: string;
-  devStatus: string;
-  categories: string[];
-  subcomponents: string[];
-  props: FieldDef[];
-  events: FieldDef[];
-  examples: ExampleDef[];
-  cssVariables: CSSVariable[];
-}
-
-interface ComponentsDB {
-  version: string;
-  generatedAt: string;
-  paragonVersion: string;
-  totalComponents: number;
-  components: Record<string, ComponentData>;
-}
-
-// ─── Data & helpers ──────────────────────────────────────────────────────────
-
-const db = componentsData as ComponentsDB;
-
-// Build O(1) lookup index by name and dirName (case-insensitive)
-const componentIndex = new Map<string, ComponentData>();
-for (const component of Object.values(db.components)) {
-  componentIndex.set(component.name.toLowerCase(), component);
-  componentIndex.set(component.dirName.toLowerCase(), component);
-}
+// ─── Helpers ────────────────────────────────────────────────────────────────
 
 const READ_ONLY_ANNOTATIONS = {
   readOnlyHint: true,
@@ -77,22 +26,6 @@ const READ_ONLY_ANNOTATIONS = {
 const componentSchema = z
   .string()
   .describe("Component name (e.g., 'Button', 'Alert', 'DataTable')");
-
-function findComponent(name: string): ComponentData | undefined {
-  return componentIndex.get(name.toLowerCase());
-}
-
-type RequireComponentResult =
-  | { component: ComponentData; error?: never }
-  | { error: ReturnType<typeof errorResult>; component?: never };
-
-function requireComponent(name: string): RequireComponentResult {
-  const component = findComponent(name);
-  if (!component) {
-    return { error: errorResult(`Component "${name}" not found.`) };
-  }
-  return { component };
-}
 
 function textResult(text: string) {
   return { content: [{ type: "text" as const, text }] };
@@ -174,9 +107,15 @@ server.registerTool(
   async ({ component: name }) => {
     const result = requireComponent(name);
     if (result.error) return result.error;
-    const { component } = result;
+    const { component, matchedSubcomponent } = result;
 
     return jsonResult({
+      ...(matchedSubcomponent
+        ? {
+            note: `"${matchedSubcomponent}" is a subcomponent of "${component.name}". Showing parent component info.`,
+            matchedSubcomponent,
+          }
+        : {}),
       name: component.name,
       description: component.description,
       status: component.status,

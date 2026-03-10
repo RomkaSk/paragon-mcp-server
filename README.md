@@ -28,16 +28,21 @@ Or add it manually to your MCP config (`~/.claude/settings.json` or project `.cl
 | Tool | Description |
 |------|-------------|
 | `list_components` | List all 63 Paragon components with categories, status, and counts |
-| `get_component` | Get full details for a component (description, props, events, subcomponents) |
+| `get_component` | Get full details for a component or subcomponent (description, props, events, subcomponents) |
 | `get_component_props` | Get all props with types and descriptions |
 | `get_component_events` | Get all callback events (onClose, onToggle, etc.) |
 | `list_examples` | List available code examples for a component |
 | `get_example` | Get the full JSX code for a specific example |
 | `get_components_variables` | Get CSS custom properties / design tokens |
 
+## Subcomponent Lookup
+
+All 73 subcomponents (e.g., `CardGrid`, `AlertHeading`, `FormControl`, `TableRow`) are automatically resolved to their parent component. Querying `get_component("CardGrid")` returns the full `Card` component info with a note indicating the subcomponent match.
+
 ## Data Coverage
 
 - **63 components** (Button, Alert, Card, DataTable, Form, Modal, etc.)
+- **73 subcomponents** with automatic parent resolution
 - **410 props** with types and descriptions
 - **69 events/callbacks**
 - **295 live code examples**
@@ -52,6 +57,7 @@ npm install
 npm run build     # generates data + bundles with tsup
 npm start         # run server
 npm run dev       # dev mode with tsx
+npm test          # run tests (348 tests covering all components & subcomponents)
 ```
 
 ## License
