@@ -4,6 +4,12 @@
   "description": "MCP server for OpenedX Paragon v23 design system documentation",
   "license": "MIT",
   "author": "Roman Kravets",
+  "contributors": [
+    {
+      "name": "Raccoon Gang",
+      "url": "https://github.com/raccoongang"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/RomkaSk/paragon-mcp-server.git"
